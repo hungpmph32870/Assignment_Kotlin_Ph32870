@@ -1,5 +1,6 @@
 package com.example.assignment_kotlin_ph32870
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -36,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontFamily
@@ -60,6 +62,7 @@ class LoginScreen : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginSc(){
+    val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -140,12 +143,14 @@ fun LoginSc(){
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(
-            onClick = {  },
+            onClick = { val intent = Intent(context, HomeScreen::class.java)
+                      context.startActivity(intent)},
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
             shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(contentColor = Color.Black, containerColor = Color.DarkGray)
+            colors = ButtonDefaults.buttonColors(contentColor = Color.Black, containerColor = Color.DarkGray),
+
         ) {
             Text(text = "Log in", color = Color.White)
         }
@@ -156,7 +161,10 @@ fun LoginSc(){
             text = "SIGN UP",
             color = Color.Blue,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.clickable {  }
+            modifier = Modifier.clickable {
+                val intent = Intent(context, SignupScreen::class.java)
+                context.startActivity(intent)
+            }
         )
     }
 }
