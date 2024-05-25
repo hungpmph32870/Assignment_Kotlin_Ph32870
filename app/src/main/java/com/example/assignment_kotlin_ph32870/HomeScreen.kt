@@ -292,6 +292,7 @@ fun BestSellerSection() {
 
 @Composable
 fun ProductItem(product: Product) {
+    val context = LocalContext.current
     Column(Modifier.padding(8.dp)) {
         Box(Modifier.padding(0.dp)) {
             Image(
@@ -301,6 +302,9 @@ fun ProductItem(product: Product) {
                     .width(200.dp)
                     .height(180.dp)
                     .clip(shape = RoundedCornerShape(8.dp))
+                    .clickable { val intent = Intent(context, ProductDeltailScreen::class.java)
+                    context.startActivity(intent)
+                    }
             )
 
             Box(
@@ -332,6 +336,7 @@ fun ProductItem(product: Product) {
             style = TextStyle(fontSize = 16.sp),
             color = Color.Gray,
             fontWeight = FontWeight.SemiBold
+
         )
         Text(
             text = product.price,
