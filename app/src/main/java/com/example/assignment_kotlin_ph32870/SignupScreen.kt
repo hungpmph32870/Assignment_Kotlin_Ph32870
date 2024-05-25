@@ -1,5 +1,6 @@
 package com.example.assignment_kotlin_ph32870
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -35,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontFamily
@@ -63,6 +65,7 @@ fun SignupSc(){
     var passwordVisible_signup by remember { mutableStateOf(false) }
     var confirm_password_signup by remember { mutableStateOf("") }
     var confirm_passwordVisible_signup by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Column (
         modifier = Modifier
@@ -181,13 +184,15 @@ fun SignupSc(){
                 text = "Already have account?",
                 color = Color(0xFFAFB4B9),
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.clickable { }
             )
             Text(
                 text = " SIGN IN",
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.clickable { }
+                modifier = Modifier.clickable {
+                    val intent = Intent(context, LoginScreen::class.java)
+                    context.startActivity(intent)
+                }
             )
         }
 

@@ -108,26 +108,23 @@ fun HomeSc () {
                         onClick = {
                             selectedItem = item
                             if (item.id == "favorites") {
-                                // Chuyển đến FavoritesActivity hoặc activity khác
                                 val intent = Intent(context, SignupScreen::class.java)
                                 context.startActivity(intent)
                             }
 
                             if (item.id == "home") {
-                                // Chuyển đến FavoritesActivity hoặc activity khác
                                 val intent = Intent(context, Home::class.java)
                                 context.startActivity(intent)
                             }
 
                             if (item.id == "notification") {
-                                // Chuyển đến FavoritesActivity hoặc activity khác
                                 val intent = Intent(context, LoginScreen::class.java)
                                 context.startActivity(intent)
                             }
 
                             if (item.id == "profile") {
-                                // Chuyển đến FavoritesActivity hoặc activity khác
-                                val intent = Intent(context, LoginScreen::class.java)
+
+                                val intent = Intent(context, ProfileScreen::class.java)
                                 context.startActivity(intent)
                             }
                         },
@@ -147,7 +144,7 @@ fun HomeSc () {
                     .padding(top = 20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { /* Xử lý sự kiện khi nhấp vào icon search */ }) {
+                IconButton(onClick = {  }) {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_search_24),
                         contentDescription = "Search",
@@ -182,7 +179,10 @@ fun HomeSc () {
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center
                 )
-                IconButton(onClick = { }) {
+                IconButton(onClick = {
+                    val intent = Intent(context, CartScreen::class.java)
+                    context.startActivity(intent)
+                }) {
                     Icon(
                         painter = painterResource(id = R.drawable.cart),
                         contentDescription = "Cart",
@@ -277,7 +277,6 @@ fun BestSellerSection() {
         Product("Minimal Stand", R.drawable.item2, "$ 25.00"),
         Product("Coffee Chair", R.drawable.item3, "$ 20.00"),
         Product("Simple Desk", R.drawable.item4, "$ 50.00"),
-        // Thêm các sản phẩm khác vào đây
     )
 
     LazyColumn {
@@ -314,7 +313,7 @@ fun ProductItem(product: Product) {
                     )
             ) {
                 IconButton(
-                    onClick = { /* Xử lý khi nhấn nút "Thêm vào giỏ hàng" */ },
+                    onClick = {  },
                     modifier = Modifier.fillMaxSize()
                 ) {
                     Icon(
