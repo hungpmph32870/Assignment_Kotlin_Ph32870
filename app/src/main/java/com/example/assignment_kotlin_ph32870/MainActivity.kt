@@ -38,94 +38,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MainTheme {
-                WelcomeScreen()
-            }
-        }
-    }
-}
+            Assignment_Kotlin_Ph32870Theme {
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
 
-@Composable
-fun MainTheme(content: @Composable () -> Unit) {
-    Surface(color = MaterialTheme.colorScheme.background) {
-        content()
-    }
-}
-
-
-// ----- Welcome -------
-@Composable
-fun WelcomeScreen() {
-    val context = LocalContext.current
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.logowelcome),
-            contentDescription = "Welcome Image",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-        Column(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text(
-                text = "MAKE YOUR",
-                color = Color.Gray,
-                fontWeight = FontWeight.Normal,
-                fontSize = 30.sp,
-                fontFamily = FontFamily.Serif,
-                modifier = Modifier.offset(x = 0.dp, y = -70.dp)
-            )
-            Text(
-                text = "HOME BEAUTIFUL",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontSize = 35.sp,
-                fontFamily = FontFamily.Serif,
-                modifier = Modifier.offset(x = 0.dp, y = -70.dp)
-            )
-            Text(
-                text = "The best simple place where you \ndiscover most wonderful furnitures \nand make your home beautiful",
-                color = Color.Gray,
-                fontWeight = FontWeight.Normal,
-                fontSize = 20.sp,
-                modifier = Modifier.offset(x = 20.dp, y = -70.dp)
-            )
-
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .height(48.dp)
-                    .offset(x = 90.dp, y = 130.dp),
-                shape = RoundedCornerShape(0.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color("#242424".toColorInt())),
-                onClick = {
-                    val intent = Intent(context, LoginScreen::class.java)
-                    context.startActivity(intent)
                 }
-            ) {
-                Text(
-                    text = "Get Started",
-                    color = Color.White
-                )
             }
         }
-    }
-}
-
-
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MainTheme {
-        WelcomeScreen(
-
-        )
     }
 }

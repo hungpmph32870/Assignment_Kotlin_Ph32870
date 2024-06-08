@@ -1,311 +1,231 @@
 package com.example.assignment_kotlin_ph32870
 
-import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-data class DanhsachCart(val img: Int, val text1: String, val gia: String)
-class CartScreen : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            LayoutCart()
-        }
-    }
-}
+import androidx.core.graphics.toColorInt
+import androidx.navigation.NavController
+import com.example.assignment_kotlin_ph32870.model.Product
 
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun LayoutCart() {
-    val context = LocalContext.current
-    Box(
+fun CartScreen(innerPadding: PaddingValues, navHostController: NavController) {
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.White)
+            .padding(
+                start = 10.dp,
+                innerPadding.calculateTopPadding(),
+                end = 10.dp
+            ),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            TopBar(
-                title = "My cart",icon = R.drawable.cart,
-                icon2 = null,
-                modifier = Modifier.width(260.dp),
-                onClickButtontTrai = {
-                    if (context is ComponentActivity) {
-                        context.finish()
-                    }
-                }
-            )
-            val danhsachCart = listOf(
-                DanhsachCart(R.drawable.item_den, "Coffee Table", "$ 20.00"),
-                DanhsachCart(R.drawable.item3, "Coffee Table", "$ 20.00"),
-                DanhsachCart(R.drawable.item2, "Coffee Table", "$ 20.00"),
-                DanhsachCart(R.drawable.item4, "Coffee Table", "$ 20.00"),
-            )
-            LazyColumn(
+        CartGrid(productArr = productArr)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(170.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Box(
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(bottom = 70.dp) // Padding to avoid the button
+                    .fillMaxWidth()
+                    .padding(end = 10.dp),
+                contentAlignment = Alignment.TopEnd
             ) {
-                items(danhsachCart) { ds ->
-                    ItemCart(
-                        text = ds.text1,
-                        img = ds.img,
-                        gia = ds.gia,
-                        modifier = Modifier.fillMaxWidth(),
-                        onClickItem = {})
-                    Divider(
-                        color = Color.Gray,
-                        thickness = 0.3.dp,
-                        modifier = Modifier.padding(horizontal = 15.dp)
+                TextField(
+                    placeholder = {
+                        Text(
+                            text = "Enter your promo code",
+                            color = Color("#999999".toColorInt()),
+                            fontSize = 16.sp,
+                            fontFamily = FontFamily(
+                                Font(R.font.nunitosans_7pt_condensed_light)
+                            ),
+                            fontWeight = FontWeight(600)
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    value = "",
+                    onValueChange = {
+
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color("#E0E0E0".toColorInt()),
+                        unfocusedContainerColor = Color.White,
+                        disabledContainerColor = Color.White,
+                        unfocusedIndicatorColor = Color.White,
+                    ),
+                )
+                Row(
+                    modifier = Modifier
+                        .size(45.dp)
+                        .shadow(elevation = 2.dp, RoundedCornerShape(14.dp))
+                        .background(color = Color("#303030".toColorInt())),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.next),
+                        contentDescription = null,
+                        modifier = Modifier.size(22.dp)
                     )
                 }
             }
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter) // Aligns to the bottom center of the screen
-        ) {
-            ChonGiamGia()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 15.dp, end = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Total:",
+                    fontSize = 23.sp,
+                    fontWeight = FontWeight(700),
+                    color = Color("#808080".toColorInt()),
+                    fontFamily = FontFamily(
+                        Font(R.font.nunitosans_7pt_condensed_bold)
+                    )
+                )
+                Text(
+                    text = "\$ 95.00",
+                    fontSize = 23.sp,
+                    fontWeight = FontWeight(700),
+                    color = Color("#000000".toColorInt()),
+                    fontFamily = FontFamily(
+                        Font(R.font.nunitosans_7pt_condensed_bold)
+                    )
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .padding(7.dp)
+                    .fillMaxWidth()
+                    .height(60.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color(0xFF242424))
+                    .clickable(onClick = {
+                        navHostController.navigate("checkout")
+                    })
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Check Box",
+                        color = Color.White,
+                        fontFamily = FontFamily(Font(R.font.nunitosans_7pt_condensed_light)),
+                        fontWeight = FontWeight(600),
+                        fontSize = 17.sp
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
-fun TopBar(title: String, icon: Int, icon2: Nothing?, modifier: Modifier, onClickButtontTrai: () -> Unit) {
-
-}
-
-
-@Composable
-private fun ItemCart(
-    text: String, img: Int, gia: String, modifier: Modifier = Modifier, onClickItem: () -> Unit
-) {
-    Row(
-        modifier = modifier.clickable(onClick = onClickItem),
-        horizontalArrangement = Arrangement.SpaceBetween
+fun CartGrid(productArr: List<Product>) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(500.dp),
+        contentPadding = PaddingValues(16.dp)
     ) {
-        Row {
-            Image(
-                painter = painterResource(id = img),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(120.dp)
-                    .padding(10.dp)
-                    .clip(shape = RoundedCornerShape(10.dp))
-            )
-            Column(modifier = Modifier.padding(top = 10.dp, start = 10.dp)) {
-                Text(
-                    text = text,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.W500,
-                    color = Color.Gray,
-
-                    )
-                Text(
-                    text = gia,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.W700,
-                    color = Color.Black,
-
-                    )
-                /////thanh cong tru
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.width(110.dp)
-                ) {
-                    androidx.compose.material3.IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.icon_remove),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(25.dp)
-                                .alpha(0.4F)
-                        )
-                    }
-                    Text(
-                        text = "50",
-                        fontWeight = FontWeight.W600,
-                        fontSize = 18.sp,
-                        color = Color.Black,
-                        textAlign = TextAlign.Center,
-                        letterSpacing = 5.sp
-                    )
-                    androidx.compose.material3.IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.icon_add),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(25.dp)
-                                .alpha(0.4F)
-                        )
-                    }
-                }
-            }
+        items(productArr) { productRow ->
+            CartItem(icon = productRow.image, name = productRow.name, price = productRow.price)
+            Spacer(modifier = Modifier.height(10.dp))
+            Divider(color = colorResource(id = R.color.graySecond), thickness = 1.dp)
+            Spacer(modifier = Modifier.height(10.dp))
         }
-        // Spacer to add space between the second column and the third column
-        Spacer(modifier = Modifier.width(16.dp))
-        // Third Column
-
-        androidx.compose.material3.IconButton(onClick = { /*TODO*/ }) {
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_delete_24),
-                contentDescription = null,
-                modifier = Modifier.size(25.dp)
-            )
-        }
-
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ChonGiamGia() {
-    val context= LocalContext.current
-    var promoCode by remember { mutableStateOf("") }
-    Column(modifier = Modifier
-        .background(Color.White)) {
-        Column(modifier = Modifier.padding(15.dp)) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                TextField(
-                    value = promoCode,
-                    onValueChange = { promoCode = it },
-                    label = { Text("Mã khuyến mãi") },
-
-                    modifier = Modifier
-                        .height(50.dp)
-                        .border(
-                            width = 0.2.dp,
-                            color = Color.LightGray,
-                            shape = RoundedCornerShape(8.dp)
-                        ),
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.White,
-                        unfocusedIndicatorColor = Color.Transparent///xoa dau gach duoi
-                        ,
-                        focusedIndicatorColor = Color.Transparent,
-                        focusedLabelColor = Color.Blue // Màu chữ khi focus
-                        ,
-                        unfocusedLabelColor = Color.Gray // Màu chữ khi không focus
+fun SmallTopAppCart(navHostController: NavController) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.White,
+                    titleContentColor = Color.Black,
+                ),
+                title = {
+                    Text(
+                        "My Cart",
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                        fontFamily = FontFamily(
+                            Font(R.font.merriweather_regular)
+                        )
                     )
-                )
-                androidx.compose.material3.IconButton(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier
-                        .background(Color.Black, shape = RoundedCornerShape(10.dp))
-                        .size(50.dp)
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navHostController.navigateUp()
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.back),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(
+                        modifier = Modifier.size(24.dp),
+                        onClick = { /* do something */ }) {
+                    }
+                },
+            )
+        },
 
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.KeyboardArrowRight,
-                        contentDescription = "Next",
-                        tint = Color.White,
-                        modifier = Modifier.size(30.dp)
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    "Tổng cộng:",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.W700,
-
-                    color = Color(0xFF808080)
-                )
-                Text(
-                    "$95.00",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.W700,
-
-                    color = Color.Black,
-                    textAlign = TextAlign.Right
-                )
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            /////
-            Button(
-                onClick = {  },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(60.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xFF242424)),
-                shape = RoundedCornerShape(10.dp),
-            ) {
-                Text(
-                    text = "Check out",
-                    fontSize = 22.sp,
-
-                    fontWeight = FontWeight.W600
-                )
-            }
-            Spacer(modifier = Modifier.height(25.dp))
-        }
+        ) { innerPadding ->
+        CartScreen(innerPadding = innerPadding , navHostController = navHostController)
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewLayout3(){
-    LayoutCart()
 }

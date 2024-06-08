@@ -1,357 +1,530 @@
 package com.example.assignment_kotlin_ph32870
 
-import android.annotation.SuppressLint
-import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material3.Card
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.input.key.Key.Companion.Home
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.toColorInt
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.example.assignment_kotlin_ph32870.model.Product
 
-class HomeScreen : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            HomeSc()
-        }
-    }
+enum class ROUTE_HOME_SCREEN {
+    Home,
+    Favorite,
+    Notification,
+    Profile
 }
 
-data class BottomNavItem(
-    val title: String,
-    val icon: Int,
-    val id: String
-)
+class Category(val icon: Int, val name: String)
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "RememberReturnType",
-    "UnusedMaterialScaffoldPaddingParameter"
-)
-
-
 @Composable
-fun HomeSc () {
-
-    val context = LocalContext.current
-
+fun FurnitureApp(navHostController : NavController) {
+    val navController = rememberNavController()
     val items = listOf(
-        BottomNavItem("Home", R.drawable.home, "home"),
-        BottomNavItem("Favorites", R.drawable.iconluu, "favorites"),
-        BottomNavItem("Notification", R.drawable.iconthongbao, "notification"),
-        BottomNavItem("Profile", R.drawable.iconprofile, "profile")
-
+        BottomNavigationItem(ROUTE_HOME_SCREEN.Home.name, Icons.Default.Home, Icons.Outlined.Home),
+        BottomNavigationItem(ROUTE_HOME_SCREEN.Favorite.name, Icons.Default.Favorite, Icons.Outlined.Favorite),
+        BottomNavigationItem(
+            "Notification",
+            Icons.Default.Notifications,
+            Icons.Outlined.Notifications
+        ),
+        BottomNavigationItem(ROUTE_HOME_SCREEN.Profile.name, Icons.Default.Person, Icons.Outlined.Person)
     )
-    var selectedItem by remember { mutableStateOf(items[0]) }
+    var selectedItemIndex by rememberSaveable { mutableStateOf(0) }
 
-    Scaffold(
-        bottomBar = {
-            BottomNavigation (
-                backgroundColor = Color(0xFFFFFFFF)
-            ){
-                items.forEach { item ->
-                    BottomNavigationItem(
-                        icon = {
-                            Icon(
-                                painterResource(id = item.icon),
-                                contentDescription = item.title,
-                                modifier = Modifier.size(25.dp)
-                            )
-                        },
-                        label = {
-                            Text(
-                                text = item.title,
-                                fontSize = 1.sp,
-                            )
-                        },
-                        selected = selectedItem == item,
-                        onClick = {
-                            selectedItem = item
-                            if (item.id == "favorites") {
-                                val intent = Intent(context, SignupScreen::class.java)
-                                context.startActivity(intent)
-                            }
-
-                            if (item.id == "home") {
-                                val intent = Intent(context, Home::class.java)
-                                context.startActivity(intent)
-                            }
-
-                            if (item.id == "notification") {
-                                val intent = Intent(context, LoginScreen::class.java)
-                                context.startActivity(intent)
-                            }
-
-                            if (item.id == "profile") {
-
-                                val intent = Intent(context, ProfileScreen::class.java)
-                                context.startActivity(intent)
-                            }
-                        },
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
-            }
-        }
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
-        Column (
-            modifier = Modifier.padding(bottom = 60.dp)
+        Scaffold(
+            topBar = {
+                TopAppBar(navController = navController , navHostController = navHostController)
+            },
+            bottomBar = {
+                BottomNavigationBar(
+                    items = items,
+                    selectedItemIndex = selectedItemIndex,
+                    onItemSelected = { index ->
+                        selectedItemIndex = index
+                        navController.navigate(items[index].title)
+                    }
+                )
+            }
+        ) { innerPadding ->
+            NavigationGraph(navHostController = navHostController,navController = navController, innerPadding = innerPadding)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopAppBar(navController: NavHostController, navHostController: NavController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route ?: "Home"
+    val homeTitle = buildAnnotatedString {
+        withStyle(
+            style = SpanStyle(
+                color = Color.Gray,
+                fontSize = 18.sp,
+                fontWeight = FontWeight(400),
+                fontFamily = FontFamily(Font(R.font.gelasio_bold))
+            )
         ) {
+            append("Make home\n")
+        }
+        withStyle(
+            style = SpanStyle(
+                color = Color.Black,
+                fontSize = 18.sp,
+                fontWeight = FontWeight(700),
+                fontFamily = FontFamily(Font(R.font.gelasio_bold))
+            )
+        ) {
+            append("BEAUTIFUL")
+        }
+    }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = {  }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_search_24),
-                        contentDescription = "Search",
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-
+    val title: Any = when (currentRoute) {
+        "Home" -> homeTitle
+        "Favorite" -> "Favorite"
+        "Notification" -> "Notification"
+        "Profile" -> "Profile"
+        else -> "Furniture App"
+    }
+    androidx.compose.material3.TopAppBar(
+        title = {
+            if (title is AnnotatedString) {
                 Text(
-                    buildAnnotatedString {
-                        withStyle(
-                            style = SpanStyle(
-                                color = Color.Gray,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Thin,
-                                fontFamily = FontFamily.Serif
-                            )
-                        ) {
-                            append("Make home \n ")
-                        }
-                        withStyle(
-                            style = SpanStyle(
-                                color = Color.Black,
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = FontFamily.Serif,
-                                letterSpacing = 0.5.sp
-                            )
-                        ) {
-                            append("BEAUTIFUL")
-                        }
-                    },
-                    modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center
+                    text = title,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
-                IconButton(onClick = {
-                    val intent = Intent(context, CartScreen::class.java)
-                    context.startActivity(intent)
-                }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.cart),
-                        contentDescription = "Cart",
-                        modifier = Modifier.size(19.dp)
+            } else if (title is String) {
+                Text(
+                    text = title,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                    fontFamily = FontFamily(
+                        Font(R.font.merriweather_regular)
                     )
-                }
-
+                )
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            CategorySection()
-            BestSellerSection()
-
-        }
-    }
-
+        },
+        actions = {
+            IconButton(onClick = { navHostController.navigate("cart") }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.cart),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        },
+        navigationIcon = {
+            IconButton(onClick = {}) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_search_24),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        },
+    )
 }
 
-
 @Composable
-fun CategorySection() {
-    Column(Modifier.padding(horizontal = 16.dp, vertical = 20.dp)) {
-        LazyRow(Modifier.fillMaxWidth()) {
-            items(listOf(
-                CategoryItem("Popular", R.drawable.poppular),
-                CategoryItem("Chair", R.drawable.chair),
-                CategoryItem("Table", R.drawable.table),
-                CategoryItem("ArmChair", R.drawable.sofa),
-                CategoryItem("Bed", R.drawable.bed),
-                CategoryItem("Lamp", R.drawable.lamp)
-            )) { item ->
-                CategoryButton(
-                    text = item.text,
-                    icon = painterResource(id = item.icon),
-                    backgroundColor = Color(android.graphics.Color.parseColor("#EEEEEE")),
-
-                    )
-            }
-        }
-    }
-}
-
-data class CategoryItem(val text: String, @DrawableRes val icon: Int)
-
-@Composable
-fun CategoryButton(
-    text: String = "",
-    icon: Painter,
-    backgroundColor: Color
+fun BottomNavigationBar(
+    items: List<BottomNavigationItem>,
+    selectedItemIndex: Int,
+    onItemSelected: (Int) -> Unit
 ) {
-    Column(
-        Modifier
-            .width(70.dp)
-            .height(100.dp)
-            .clickable { }
-            .padding(horizontal = 8.dp)
-
+    NavigationBar(
+        containerColor = Color("#ffffff".toColorInt())
     ) {
-        Box(
-            Modifier
-                .size(60.dp)
-                .background(
-                    color = backgroundColor,
-                    shape = RoundedCornerShape(12.dp)
+        items.forEachIndexed { index, item ->
+            NavigationBarItem(
+                selected = selectedItemIndex == index,
+                onClick = { onItemSelected(index) },
+                icon = {
+                    Icon(
+                        imageVector = if (selectedItemIndex == index) item.selectIcon else item.unselectItem,
+                        contentDescription = item.title,
+                        modifier = Modifier.size(24.dp)
+                    )
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = colorResource(id = android.R.color.black),
+                    unselectedIconColor = Color.Gray
                 )
-                .padding(13.dp)
-        ) {
-            Image(
-                painter = icon,
-                contentDescription = "",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Fit
-
             )
         }
+    }
+}
+
+@Composable
+fun CategoryItem(icon: Int, name: String) {
+    Column(
+        modifier = Modifier.padding(end = 25.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
+            modifier = Modifier
+                .size(44.dp)
+                .shadow(elevation = 2.dp, RoundedCornerShape(14.dp))
+                .background(color = Color("#F5F5F5".toColorInt())),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Image(
+                painter = painterResource(id = icon),
+                contentDescription = null,
+                modifier = Modifier.size(22.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(5.dp))
         Text(
-            text = text,
+            text = name,
+            color = Color("#999999".toColorInt()),
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily(
+                Font(R.font.nunitosans_7pt_condensed_light)
+            )
+        )
+    }
+}
+@Composable
+fun HomeScreen(innerPadding: PaddingValues = PaddingValues(), navController: NavController) {
+    val categoryArr = listOf(
+        Category(R.drawable.poppular, "Popular"),
+        Category(R.drawable.chair, "Chair"),
+        Category(R.drawable.table, "Table"),
+        Category(R.drawable.sofa, "Armchair"),
+        Category(R.drawable.bed, "Bed"),
+        Category(R.drawable.lamp, "Lamp")
+
+    )
+    val scrollState = rememberScrollState()
+    Column(
+        modifier = Modifier.padding(
+            top = 10.dp,
+            end = 15.dp,
+            start = 15.dp
+        )
+    ) {
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 10.dp, end = 1.dp),
-            textAlign = TextAlign.Center,
-            fontSize = 12.sp,
-            color = Color.Gray,
-            fontWeight = FontWeight.Bold
-        )
-    }
-}
-
-@Composable
-fun BestSellerSection() {
-    val productList = listOf(
-        Product("Black Simple Lamp", R.drawable.item_den, "$ 12.00"),
-        Product("Minimal Stand", R.drawable.item2, "$ 25.00"),
-        Product("Coffee Chair", R.drawable.item3, "$ 20.00"),
-        Product("Simple Desk", R.drawable.item4, "$ 50.00"),
-    )
-
-    LazyColumn {
-        itemsIndexed(items = productList.chunked(2)) { index, products ->
-            Row(Modifier.fillMaxWidth()) {
-                products.forEach { product ->
-                    ProductItem(product)
+                .horizontalScroll(scrollState)
+        ) {
+            categoryArr.forEach { category ->
+                CategoryItem(icon = category.icon, name = category.name)
+            }
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            items(productArr.chunked(2)) { productRow ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    for (product in productRow) {
+                        ProductItem(
+                            image = product.image,
+                            name = product.name,
+                            price = product.price,
+                            navController = navController
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-@Composable
-fun ProductItem(product: Product) {
-    val context = LocalContext.current
-    Column(Modifier.padding(8.dp)) {
-        Box(Modifier.padding(0.dp)) {
-            Image(
-                painter = painterResource(id = product.imageResource),
-                contentDescription = null,
-                modifier = Modifier
-                    .width(200.dp)
-                    .height(180.dp)
-                    .clip(shape = RoundedCornerShape(8.dp))
-                    .clickable { val intent = Intent(context, ProductDeltailScreen::class.java)
-                    context.startActivity(intent)
-                    }
-            )
 
-            Box(
+@Composable
+fun NavigationGraph(navHostController : NavController, navController: NavHostController, innerPadding: PaddingValues) {
+    NavHost(
+        navController,
+        startDestination = ROUTE_HOME_SCREEN.Home.name,
+        modifier = Modifier.padding(innerPadding)
+    ) {
+        composable(ROUTE_HOME_SCREEN.Home.name) { HomeScreen(innerPadding , navHostController) }
+        composable(ROUTE_HOME_SCREEN.Favorite.name) { FavoriteScreen(innerPadding) }
+        composable(ROUTE_HOME_SCREEN.Notification.name) { NotificationScreen(innerPadding) }
+        composable(ROUTE_HOME_SCREEN.Profile.name) { AccountScreenControl(innerPadding , navHostController) }
+    }
+}
+
+data class BottomNavigationItem(
+    val title: String,
+    val selectIcon: ImageVector,
+    var unselectItem: ImageVector
+)
+
+val productArr = listOf(
+    Product(R.drawable.item2, "Black Simple Lamp", 12.00),
+    Product(R.drawable.item2, "Black Simple Lamp", 12.00),
+    Product(R.drawable.item2, "Black Simple Lamp", 12.00),
+    Product(R.drawable.item2, "Black Simple Lamp", 12.00),
+    Product(R.drawable.item2, "Black Simple Lamp", 12.00),
+
+)
+
+@Composable
+fun ProductItem(image: Int, name: String, price: Double , navController: NavController) {
+    Column(
+        modifier = Modifier
+            .width(165.dp)
+            .height(253.dp).
+            clickable { navController.navigate("detail") },
+        verticalArrangement = Arrangement.SpaceAround,
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+        ) {
+            Image(
+                modifier = Modifier.fillMaxSize(),
+                painter = painterResource(id = image),
+                contentDescription = null
+            )
+            Column(
                 modifier = Modifier
-                    .size(29.dp)
-                    .offset(x = 130.dp, y = 140.dp)
-                    .background(
-                        color = Color(android.graphics.Color.parseColor("#AAAAAA")),
-                        shape = RoundedCornerShape(7.dp)
-                    )
+                    .fillMaxSize()
+                    .padding(bottom = 10.dp, end = 15.dp),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.End
             ) {
-                IconButton(
-                    onClick = {  },
-                    modifier = Modifier.fillMaxSize()
+                Row {
+
+                }
+                Row(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .shadow(elevation = 2.dp, RoundedCornerShape(6.dp))
+                        .background(color = Color("#95a5a6".toColorInt()))
+                        .alpha(1f),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.cart),
-                        contentDescription = "Thêm vào giỏ hàng",
-                        tint = Color.White,
+                    Image(
+                        painter = painterResource(id = R.drawable.shopingbag),
+                        contentDescription = null,
                         modifier = Modifier.size(18.dp)
                     )
                 }
             }
         }
-
         Text(
-            text = product.name,
-            modifier = Modifier.padding(top = 8.dp, start = 25.dp),
-            style = TextStyle(fontSize = 16.sp),
+            text = name,
+            fontSize = 14.sp,
             color = Color.Gray,
-            fontWeight = FontWeight.SemiBold
-
+            fontWeight = FontWeight(500),
+            fontFamily = FontFamily(
+                Font(R.font.nunitosans_7pt_condensed_light)
+            )
         )
         Text(
-            text = product.price,
-            modifier = Modifier.padding(top = 4.dp, start = 25.dp),
-            style = TextStyle(fontSize = 14.sp, color = Color.Gray),
+            text = "\$ " + price,
+            fontSize = 14.sp,
             color = Color.Black,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily(
+                Font(R.font.nunitosans_7pt_condensed_light)
+            )
         )
     }
 }
 
-data class Product(val name: String, @DrawableRes val imageResource: Int, val price: String)
-
-@Preview(showBackground = true)
 @Composable
-fun PreviewLayout2(){
-    HomeSc()
+fun FavoriteItem(icon : Int , name : String , price : Double){
+    Row (modifier = Modifier
+        .fillMaxWidth()
+        .height(110.dp)
+        .background(Color.White),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically){
+        Image(painter = painterResource(id = icon), contentDescription = null, modifier = Modifier
+            .width(110.dp)
+            .height(120.dp), contentScale = ContentScale.FillBounds)
+
+        Column (modifier = Modifier
+            .width(200.dp)
+            .padding(start = 10.dp)
+            .fillMaxHeight()) {
+            Text(text = name, fontSize = 15.sp, fontWeight = FontWeight(600), color = colorResource(
+                id = R.color.gray
+            ), fontFamily = FontFamily(
+                Font(R.font.nunitosans_7pt_condensed_light)
+            ))
+            Spacer(modifier = Modifier.height(3.dp))
+            Text(text = "\$ " + price, fontSize = 16.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily(
+                Font(R.font.nunitosans_7pt_condensed_bold)
+            ))
+        }
+        Column (modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceBetween, horizontalAlignment = Alignment.CenterHorizontally){
+            Icon(painter = painterResource(id = R.drawable.delete), contentDescription = null, modifier = Modifier.size(24.dp))
+
+            Row {
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(painter = painterResource(id = R.drawable.bag), contentDescription = null, modifier = Modifier.size(24.dp))
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun CartItem(icon : Int , name : String , price : Double){
+    Row (modifier = Modifier
+        .fillMaxWidth()
+        .height(110.dp)
+        .background(Color.White),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically){
+        Image(painter = painterResource(id = icon), contentDescription = null, modifier = Modifier
+            .width(110.dp)
+            .height(120.dp), contentScale = ContentScale.FillBounds)
+
+        Column (modifier = Modifier
+            .width(200.dp)
+            .padding(start = 10.dp)
+            .fillMaxHeight(),
+            verticalArrangement = Arrangement.SpaceBetween) {
+            Column {
+                Text(text = name, fontSize = 15.sp, fontWeight = FontWeight(600), color = colorResource(
+                    id = R.color.gray
+                ), fontFamily = FontFamily(
+                    Font(R.font.nunitosans_7pt_condensed_light)
+                ))
+                Spacer(modifier = Modifier.height(3.dp))
+                Text(text = "\$ "+price, fontSize = 16.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily(
+                    Font(R.font.nunitosans_7pt_condensed_bold)
+                ))
+            }
+            Row(
+                modifier = Modifier.width(113.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(color = Color("#E0E0E0".toColorInt())),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.icon_add),
+                        contentDescription = null,
+                        modifier = Modifier.size(13.dp)
+                    )
+                }
+                Text(
+                    text = "01",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight(700),
+                    fontFamily = FontFamily(
+                        Font(R.font.nunitosans_7pt_condensed_bold)
+                    )
+                )
+                Box(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(color = Color("#E0E0E0".toColorInt())),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.icon_remove),
+                        contentDescription = null,
+                        modifier = Modifier.size(13.dp)
+                    )
+                }
+            }
+
+
+        }
+        Column (modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceBetween, horizontalAlignment = Alignment.CenterHorizontally){
+            Icon(painter = painterResource(id = R.drawable.delete), contentDescription = null, modifier = Modifier.size(24.dp))
+
+            Row {
+
+            }
+        }
+    }
 }
